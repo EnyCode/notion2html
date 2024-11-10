@@ -3,7 +3,7 @@ name = "notion2html"
 version = "0.1.0"
 edition = "2021"
 
-license = "MPL-2"
+license = "MPL-2.0"
 description = "Convert Notion pages to HTML"
 repository = "https://github.com/EnyCode/notion2html"
 readme = "README.md"
