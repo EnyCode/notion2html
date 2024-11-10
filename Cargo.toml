@@ -3,7 +3,7 @@ name = "notion2html"
 version = "0.1.0"
 edition = "2021"
 
-license = "MPL 2.0"
+license = "MPL-2"
 description = "Convert Notion pages to HTML"
 repository = "https://github.com/EnyCode/notion2html"
 readme = "README.md"
@@ -11,9 +11,7 @@ categories = ["command-line-utilities", "text-processing"]
 keywords = ["notion", "html", "markdown", "cli"]
 
 [dependencies]
-crossterm = "0.28.1"
 log = "0.4.22"
-ratatui = "0.29.0"
 reqwest = { version = "0.12.9", features = ["blocking", "json"] }
 serde = { version = "1.0.214", features = ["derive"] }
 serde_json = "1.0.132"
