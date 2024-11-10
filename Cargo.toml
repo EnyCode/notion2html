@@ -11,6 +11,7 @@ categories = ["command-line-utilities", "text-processing"]
 keywords = ["notion", "html", "markdown", "cli"]
 
 [dependencies]
+crossterm = "0.28.1"
 log = "0.4.22"
 reqwest = { version = "0.12.9", features = ["blocking", "json"] }
 serde = { version = "1.0.214", features = ["derive"] }
