@@ -1,8 +1,6 @@
-use std::default;
 use std::fmt::Display;
 
 use log::debug;
-use log::error;
 use log::warn;
 
 use crate::notion::Block as NotionBlock;
@@ -55,8 +53,8 @@ pub fn parse_blocks(notion: Vec<NotionBlock>) -> Vec<Block> {
             NotionBlockData::ToDo {
                 rich_text,
                 checked,
-                color,
                 children,
+                ..
             } => {
                 if let Some(children) = children {
                     out.push(Block::TodoList {
@@ -166,9 +164,9 @@ pub enum Block {
         text: String,
         lang: String,
     },
-    Image {
-        url: String,
-    },
+    //Image {
+    //    url: String,
+    //},
     List {
         items: Vec<Block>,
     },
@@ -194,7 +192,7 @@ impl Display for Block {
                 Block::Divider { .. } => "Divider",
                 Block::Quote { .. } => "Quote",
                 Block::CodeBlock { .. } => "CodeBlock",
-                Block::Image { .. } => "Image",
+                //Block::Image { .. } => "Image",
                 Block::List { .. } => "List",
                 Block::NumberedList { .. } => "NumberedList",
                 Block::TodoList { .. } => "TodoList",

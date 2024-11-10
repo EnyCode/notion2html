@@ -1,16 +1,12 @@
-use std::io::{stdout, Stdout, Write};
+use std::io::{stdout, Stdout};
 
 use crossterm::{
     execute,
-    style::{
-        Attribute, Color, ContentStyle, Print, ResetColor, SetAttribute, SetForegroundColor,
-        SetStyle,
-    },
+    style::{Attribute, Color, Print, ResetColor, SetAttribute, SetForegroundColor},
     ExecutableCommand,
 };
 use log::{debug, info};
 use notion::PageResponse;
-use ratatui::symbols::block;
 use reqwest::blocking::ClientBuilder;
 use simplelog::TermLogger;
 
