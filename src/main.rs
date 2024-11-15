@@ -1,13 +1,7 @@
-use std::io::{stdout, Stdout};
-
-use crossterm::{
-    execute,
-    style::{Attribute, Color, Print, ResetColor, SetAttribute, SetForegroundColor},
-    ExecutableCommand,
-};
-use log::{debug, info};
+use log::{debug, error, info};
 use notion::PageResponse;
-use reqwest::blocking::ClientBuilder;
+use owo_colors::OwoColorize;
+use reqwest::{blocking::ClientBuilder, StatusCode};
 use simplelog::TermLogger;
 
 mod html;
@@ -18,6 +12,7 @@ mod notion;
 //pub enum Block {}
 
 fn main() {
+    let executable = std::env::args().nth(0).unwrap_or("notion2html".to_string());
     let arg = std::env::args().nth(1);
     let page = match arg {
         Some(ref arg) => arg,
@@ -35,9 +30,12 @@ fn main() {
         }
     };
 
-    // TODO: use logging for the errors
     TermLogger::init(
-        simplelog::LevelFilter::Debug,
+        if &executable == "notion2html" {
+            simplelog::LevelFilter::Info
+        } else {
+            simplelog::LevelFilter::Debug
+        },
         simplelog::Config::default(),
         simplelog::TerminalMode::Stderr,
         simplelog::ColorChoice::Auto,
@@ -57,7 +55,7 @@ fn main() {
 
     debug!("Created reqwest client");
 
-    let data: PageResponse = client
+    let req = client
         .get(&format!(
             "https://api.notion.com/v1/blocks/{}/children?page_size=100",
             page
@@ -65,56 +63,68 @@ fn main() {
         .bearer_auth(token)
         .header("Notion-Version", "2022-06-28")
         .send()
-        .expect("Failed to fetch page")
-        .json()
-        .expect("Failed to parse JSON");
+        .expect("Failed to fetch page");
+
+    debug!("Page fetched with status {}", req.status());
+
+    if !req.status().is_success() {
+        let status = req.status();
+        match status {
+            StatusCode::NOT_FOUND => {
+                error!(
+                    "Page not found! Have you added the integration to the page you want to see?"
+                );
+                return;
+            }
+            StatusCode::UNAUTHORIZED => {
+                error!("Unauthorized! Check your auth token. ");
+                return;
+            }
+            StatusCode::TOO_MANY_REQUESTS => {
+                error!("Too many requests! Please wait a bit before trying again.");
+                return;
+            }
+            _ => {
+                error!(
+                    "Failed to fetch page! Errored with {} {}. ",
+                    status,
+                    status.canonical_reason().unwrap_or("Unknown error")
+                );
+                return;
+            }
+        }
+    }
+
+    let data: PageResponse = req.json().expect("Failed to parse JSON");
 
     info!("Fetch successfully!");
 
+    debug!("Parsing blocks to intermediary...");
     let blocks = intermediary::parse_blocks(data.results);
 
-    //eprintln!("{:#?}", blocks);
-
+    debug!("Converting from intermediary format to HTML...");
     println!("{}", html::from_blocks(blocks, false));
 }
 
 fn no_auth() {
-    let stdout = &mut stdout();
-
-    set_bold(stdout, true).unwrap();
-    print_color(stdout, Color::Red, "Error: ").unwrap();
-    set_bold(stdout, false).unwrap();
-    print_color(stdout, Color::DarkRed, "No auth token provided!\n\n").unwrap();
-    print!("Please provide a Notion auth token in the ");
-    set_bold(stdout, true).unwrap();
-    print!("NOTION_TOKEN");
-    set_bold(stdout, false).unwrap();
-    println!(" environment variable.\n");
+    eprintln!(
+        "{} {}\n",
+        "Error:".bright_red().bold(),
+        "No auth token provided!".red()
+    );
+    eprintln!(
+        "Please provide a Notion auth token in the {} environment variable. ",
+        "NOTION_TOKEN".bold()
+    );
 }
 
 fn help() {
-    let arg = std::env::args().nth(0);
-    println!("Fetch a Notion page as markdown!\n");
+    eprintln!("Fetch a Notion page as markdown!\n");
 
-    let stdout = &mut stdout();
-
-    set_bold(stdout, true).unwrap();
-    print_color(stdout, Color::Green, "Usage: ").unwrap();
-    print_color(stdout, Color::Cyan, &arg.unwrap()).unwrap();
-    set_bold(stdout, false).unwrap();
-    print_color(stdout, Color::DarkCyan, " <page_id>\n").unwrap();
-
-    stdout.execute(ResetColor).unwrap();
-}
-
-fn set_bold(stdout: &mut Stdout, bold: bool) -> Result<(), std::io::Error> {
-    if bold {
-        execute!(stdout, SetAttribute(Attribute::Bold))
-    } else {
-        execute!(stdout, SetAttribute(Attribute::NormalIntensity))
-    }
-}
-
-fn print_color(stdout: &mut Stdout, color: Color, text: &str) -> Result<(), std::io::Error> {
-    execute!(stdout, SetForegroundColor(color), Print(text), ResetColor)
+    eprintln!(
+        "{} {} {}",
+        "Usage:".bright_green().bold(),
+        "notion2html".bright_cyan(),
+        "<page_id>".cyan()
+    );
 }

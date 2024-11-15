@@ -1,6 +1,5 @@
 use std::fmt::Display;
 
-use log::debug;
 use log::warn;
 
 use crate::notion::Block as NotionBlock;
@@ -56,7 +55,7 @@ pub fn parse_blocks(notion: Vec<NotionBlock>) -> Vec<Block> {
                 children,
                 ..
             } => {
-                if let Some(children) = children {
+                if let Some(_) = children {
                     out.push(Block::TodoList {
                         items: vec![(
                             checked,
@@ -65,7 +64,6 @@ pub fn parse_blocks(notion: Vec<NotionBlock>) -> Vec<Block> {
                             },
                         )],
                     });
-                    debug!("Todo children: {:?}", children);
                     warn!("Ignoring children of todo block");
                 } else {
                     out.push(Block::TodoList {
@@ -83,13 +81,12 @@ pub fn parse_blocks(notion: Vec<NotionBlock>) -> Vec<Block> {
                 children,
                 ..
             } => {
-                if let Some(children) = children {
+                if let Some(_) = children {
                     out.push(Block::List {
                         items: vec![Block::Line {
                             rich_text: notion_to_text(rich_text),
                         }],
                     });
-                    debug!("List children: {:?}", children);
                     warn!("Ignoring children of list block");
                 } else {
                     out.push(Block::List {
@@ -104,13 +101,12 @@ pub fn parse_blocks(notion: Vec<NotionBlock>) -> Vec<Block> {
                 children,
                 ..
             } => {
-                if let Some(children) = children {
+                if let Some(_) = children {
                     out.push(Block::List {
                         items: vec![Block::Line {
                             rich_text: notion_to_text(rich_text),
                         }],
                     });
-                    debug!("List children: {:?}", children);
                     warn!("Ignoring children of list block");
                 } else {
                     out.push(Block::NumberedList {

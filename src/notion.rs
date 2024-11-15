@@ -4,26 +4,26 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct PageResponse {
-    pub object: String,
+    //pub object: String,
     pub results: Vec<Block>,
-    pub next_cursor: Option<String>,
-    pub has_more: bool,
+    //pub next_cursor: Option<String>,
+    //pub has_more: bool,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Block {
-    pub object: String,
-    pub id: String,
+    //pub object: String,
+    //pub id: String,
     //parent: Parent,
-    #[serde(rename = "created_time")]
-    pub created: String,
-    #[serde(rename = "last_edited_time")]
-    pub last_edited: String,
+    //#[serde(rename = "created_time")]
+    //pub created: String,
+    //#[serde(rename = "last_edited_time")]
+    //pub last_edited: String,
     // created_by: {object, id}
     // last_edited_by: {object, id}
-    pub has_children: bool,
-    pub archived: bool,
-    pub in_trash: bool,
+    //pub has_children: bool,
+    //pub archived: bool,
+    //pub in_trash: bool,
     #[serde(rename = "type")]
     pub ty: String,
     #[serde(flatten)]
@@ -34,28 +34,28 @@ pub struct Block {
 #[serde(rename_all = "snake_case")]
 pub enum BlockData {
     Bookmark {
-        caption: Vec<RichText>,
-        url: String,
+        //caption: Vec<RichText>,
+        //url: String,
     },
     Breadcrumb,
     BulletedListItem {
         rich_text: Vec<RichText>,
-        color: NotionColor,
+        //color: NotionColor,
         children: Option<Vec<Block>>,
     },
     Callout {
-        rich_text: Vec<RichText>,
+        //rich_text: Vec<RichText>,
         // icon (emoji or file)
-        color: NotionColor,
+        //color: NotionColor,
     },
     ChildDatabase {
-        title: String,
+        //title: String,
     },
     ChildPage {
-        title: String,
+        //title: String,
     },
     Code {
-        caption: Vec<RichText>,
+        //caption: Vec<RichText>,
         rich_text: Vec<RichText>,
         language: NotionLanguages,
     },
@@ -63,85 +63,85 @@ pub enum BlockData {
     Column,
     Divider,
     Embed {
-        url: String,
+        //url: String,
     },
     Equation {
-        expression: String,
+        //expression: String,
     },
     File {
         // TODO: file
-        caption: Vec<RichText>,
-        #[serde(rename = "type")]
-        ty: String,
-        name: String,
+        //caption: Vec<RichText>,
+        //#[serde(rename = "type")]
+        //ty: String,
+        //name: String,
     },
     #[serde(rename = "heading_1")]
     Heading1 {
         rich_text: Vec<RichText>,
-        color: NotionColor,
-        is_toggleable: bool,
+        //color: NotionColor,
+        //is_toggleable: bool,
     },
     #[serde(rename = "heading_2")]
     Heading2 {
         rich_text: Vec<RichText>,
-        color: NotionColor,
-        is_toggleable: bool,
+        //color: NotionColor,
+        //is_toggleable: bool,
     },
     #[serde(rename = "heading_3")]
     Heading3 {
         rich_text: Vec<RichText>,
-        color: NotionColor,
-        is_toggleable: bool,
+        //color: NotionColor,
+        //is_toggleable: bool,
     },
     Image {
-        #[serde(rename = "type")]
-        ty: String,
+        //#[serde(rename = "type")]
+        //ty: String,
         // TODO: image
     },
     LinkPreview {
-        url: String,
+        //url: String,
     },
-    Mention(MentionData),
+    Mention(/* MentionData */),
     NumberedListItem {
         rich_text: Vec<RichText>,
-        color: NotionColor,
+        //color: NotionColor,
         children: Option<Vec<Block>>,
     },
     Paragraph {
         rich_text: Vec<RichText>,
-        color: NotionColor,
-        children: Option<Vec<Block>>,
+        //color: NotionColor,
+        //children: Option<Vec<Block>>,
     },
     Pdf {
         // TODO: pdf
     },
     Quote {
         rich_text: Vec<RichText>,
-        color: NotionColor,
+        //color: NotionColor,
         children: Option<Vec<Block>>,
     },
     // synced block
     Table {
-        table_width: usize,
-        has_column_header: bool,
-        has_column_totals: bool,
+        //table_width: usize,
+        //has_column_header: bool,
+        //has_column_totals: bool,
     },
     TableRow {
-        cells: Vec<RichText>,
+        //cells: Vec<RichText>,
     },
     TableOfContents {
-        color: NotionColor,
+        //color: NotionColor,
     },
     ToDo {
         rich_text: Vec<RichText>,
         checked: bool,
-        color: NotionColor,
+        //color: NotionColor,
         children: Option<Vec<Block>>,
     },
     Toggle {
-        rich_text: Vec<RichText>,
-        color: NotionColor,
-        children: Option<Vec<Block>>,
+        //rich_text: Vec<RichText>,
+        //color: NotionColor,
+        //children: Option<Vec<Block>>,
     },
     Video {
         // TODO: file
@@ -150,10 +150,10 @@ pub enum BlockData {
 
 #[derive(Debug, Deserialize)]
 pub struct RichText {
-    #[serde(rename = "type")]
-    pub ty: String,
-    #[serde(flatten)]
-    pub data: RichTextData,
+    //#[serde(rename = "type")]
+    //pub ty: String,
+    //#[serde(flatten)]
+    //pub data: RichTextData,
     pub annotations: Annotations,
     pub plain_text: String,
     pub href: Option<String>,
@@ -169,7 +169,7 @@ pub struct Annotations {
     pub color: NotionColor,
 }
 
-#[derive(Debug, Deserialize)]
+/*#[derive(Debug, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum RichTextData {
     Text {
@@ -185,7 +185,7 @@ pub enum RichTextData {
         #[serde(flatten)]
         data: MentionData,
     },
-}
+}*/
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -278,12 +278,12 @@ impl Display for NotionLanguages {
     }
 }
 
-#[derive(Debug, Deserialize)]
+/*#[derive(Debug, Deserialize)]
 pub struct Url {
     pub url: String,
-}
+}*/
 
-#[derive(Debug, Deserialize)]
+/*#[derive(Debug, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum MentionData {
     Database {
@@ -309,7 +309,7 @@ pub enum MentionData {
         object: String,
         id: String,
     },
-}
+}*/
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "snake_case")]

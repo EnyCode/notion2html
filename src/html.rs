@@ -1,4 +1,4 @@
-use log::debug;
+use log::trace;
 use log::warn;
 
 use crate::intermediary::Block;
@@ -8,9 +8,6 @@ pub fn from_blocks(blocks: Vec<Block>, extra: bool) -> String {
     let mut out = String::new();
 
     for block in preprocess(blocks) {
-        if extra {
-            debug!("extra type is {}", block.to_string())
-        }
         match block {
             Block::Header { rich_text, size } => {
                 out += &format!("<h{}>{}</h{}>", size, rich_text_to_html(rich_text), size);
@@ -32,25 +29,17 @@ pub fn from_blocks(blocks: Vec<Block>, extra: bool) -> String {
                 );
             }
             Block::List { items } => {
-                debug!("LIST HTML LIST");
                 out += "<ul>";
                 for item in items {
-                    debug!("parse");
-                    debug!("{:#?}", item);
                     let h = from_blocks(vec![item], true);
-                    debug!("end parse");
                     out += &format!("<li>{}</li>", h);
                 }
                 out += "</ul>";
             }
             Block::NumberedList { items } => {
-                debug!("LIST HTML LIST");
                 out += "<ol>";
                 for item in items {
-                    debug!("parse");
-                    debug!("{:#?}", item);
                     let h = from_blocks(vec![item], true);
-                    debug!("end parse");
                     out += &format!("<li>{}</li>", h);
                 }
                 out += "</ol>";
@@ -71,7 +60,7 @@ pub fn from_blocks(blocks: Vec<Block>, extra: bool) -> String {
                     out += "<br />";
                 } else {
                     if extra {
-                        debug!("{:#?}", rich_text);
+                        trace!("extra rich_text: {:#?}", rich_text);
                     }
                     out += &format!("<p>{}</p>", rich_text_to_html(rich_text));
                 }
@@ -117,8 +106,6 @@ fn preprocess(blocks: Vec<Block>) -> Vec<Block> {
                     let mut new_items = last_items;
                     new_items.extend(items);
                     last_block = Block::List { items: new_items };
-
-                    debug!("{:#?}", last_block);
                 }
                 _ => {
                     out.push(last_block);
@@ -130,8 +117,6 @@ fn preprocess(blocks: Vec<Block>) -> Vec<Block> {
                     let mut new_items = last_items;
                     new_items.extend(items);
                     last_block = Block::NumberedList { items: new_items };
-
-                    debug!("{:#?}", last_block);
                 }
                 _ => {
                     out.push(last_block);
